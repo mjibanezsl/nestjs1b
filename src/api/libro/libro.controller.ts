@@ -2,9 +2,36 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Libro } from './libro';
 import {Librosinid} from './librosinid';
+import { RestService } from './rest/rest.service';
 
 @Controller('libro')
 export class LibroController {
+
+  private libro: Libro[] = [];
+  constructor(private readonly restService: RestService) {
+    this.libro = this.restService.getDatos();
+  }
+
+
+  @Get()
+  getDatos(): Libro[] {
+    return this.restService.getDatos();
+  }
+  @Post()
+  async create(@Body() mylibro: Libro) {
+    //this.libro.push(mylibro);
+    //return `This action adds a new object with name: ${libro.titulo}`;
+ 
+    const libro = new Libro();
+    libro.id = 1;   
+    libro.titulo = 'quijote';
+    libro.autor = 'cervantes';
+    libro.fecha=  new Date("1850-01-16");  
+    this.restService.addDatos(libro);
+    return `This action adds a new object with name: ${libro.titulo}`;
+  }
+
+  /*
     @Get() // listado
     findAll(): Libro[] {
       // buscar los datos en la BBDD
@@ -18,7 +45,7 @@ export class LibroController {
       libro.titulo = mylibro.titulo;
       libro.autor = mylibro.autor;
       return libro;
-    }
+    }*/
     @Get('/:id') // mostrar
     getById(@Param() params): Libro {
       // Capturar e id y consultar a la BBDD
@@ -26,7 +53,7 @@ export class LibroController {
       libro.id = params.id;
       libro.titulo = 'quijote';
       libro.autor = 'cervantes';
-      libro.fecha=  new Date("1850-01-16");  ;  
+      libro.fecha=  new Date("1850-01-16");   
       return libro;
     }
     @Put('/:id') // modificar un objeto
